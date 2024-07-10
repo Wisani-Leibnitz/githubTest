@@ -1,0 +1,17 @@
+/* styles.css */
+
+/* Change all green colors to the new green */
+button, .btn, .login-button {
+    background-color: rgb(76, 175, 80);
+    border-color: rgb(76, 175, 80);
+    color: white; /* Assuming you want the text to be white */
+    padding: 10px 20px; /* Example padding */
+    border-radius: 5px; /* Example border radius */
+    cursor: pointer; /* Change cursor to pointer */
+    font-size: 16px; /* Example font size */
+}
+
+button:hover, .btn:hover, .login-button:hover {
+    background-color: rgb(66, 155, 70); /* Optional: Darker shade for hover effect */
+    border-color: rgb(66, 155, 70);
+}

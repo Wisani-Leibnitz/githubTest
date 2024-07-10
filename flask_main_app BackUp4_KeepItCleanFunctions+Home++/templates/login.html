@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Other meta tags and title -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
+    
+    <!-- Internal CSS -->
+    <style>
+        /* Reset default styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body styles */
+        body {
+            font-family: 'Roboto', sans-serif; /* Use Roboto font for the entire page */
+            padding-top: 60px; /* Adjust according to the address bar height */
+        }
+
+        /* Address bar styles */
+        .address-bar {
+            background-color: lightgreen;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1px 20px;
+            font-size: 16px;
+            height: 50px; /* Fixed height */
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000; /* Ensure it stays above other content */
+        }
+
+        /* Adjust content position to avoid overlapping with fixed address bar */
+        .centered-content {
+            padding-top: 20px;
+            text-align: center;
+        }
+
+        /* Logo styles */
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            width: 80px; /* Adjust as needed */
+            margin-right: 10px;
+        }
+
+        .logo-text {
+            color: black; /* Initial color */
+            transition: color 0.3s ease;
+            font-family: 'Roboto Bold', sans-serif; /* Use Roboto Bold for company name */
+        }
+
+        .logo-link {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Navigation styles */
+        .nav-list {
+            display: flex;
+            list-style-type: none;
+        }
+
+        .nav-list li {
+            position: relative;
+            margin: 0 15px;
+        }
+
+        .dropbtn {
+            color: black; /* Initial color */
+            text-decoration: none;
+            font-weight: normal; /* Remove bold */
+        }
+
+        .dropdown {
+            position: center;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.75); /* Transparent white */
+            min-width: 300px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 10px; /* Rounded corners */
+        }
+
+        .dropdown-content a {
+            color: black; /* Initial color */
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s ease;
+            font-weight: thin; /* Remove bold */
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: lightgrey; /* Hover background color */
+        }
+
+        /* Search styles */
+        .search {
+            display: flex;
+            align-items: center;
+        }
+
+        .search input[type="text"] {
+            background-color: rgb(251, 248, 248); /* Light grey background */
+            border: none;
+            padding: 6px;
+            margin-right: 10px;
+            border-radius: 5px;
+            width: 200px; /* Adjust width as needed */
+        }
+
+        .search button {
+            background-color: black; /* Black button */
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search button:hover {
+            background-color: grey; /* Grey on hover */
+        }
+
+        /* Login button styles */
+        .login a {
+            background-color: black; /* Black button */
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .login a:hover {
+            background-color: grey; /* Grey on hover */
+        }
+
+        /* Login container styles */
+        .login-container {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+            z-index: 1000;
+        }
+
+        .login-container h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .login-container input[type="email"], .login-container input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .login-container button:hover {
+            background-color: #45a049;
+        }
+
+        .login-container .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* Overlay styles */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        /* Sub bar styles */
+        .sub-bar {
+            height: calc(33% - 4px); /* 1/3 of address bar height minus 4px for padding */
+            background-color: rgba(0, 0, 0, 0.8); /* Transparent dark grey */
+        }
+
+        /* Centered content styles */
+        .centered-content {
+            text-align: center;
+            padding: 50px;
+        }
+
+        /* Glow slide effect */
+        .glow-slide {
+            font-size: 24px;
+            transition: text-shadow 0.5s ease;
+        }
+
+        .glow-effect {
+            text-shadow: 0 0 10px green; /* Glow effect */
+        }
+
+        /* Slideshow container styles */
+        .slideshow-container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            padding-top: 20px;
+        }
+
+        .slick-slide {
+            display: none;
+        }
+
+        .slick-active {
+            display: block;
+        }
+
+        .slick-slide img {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Light green address bar with navigation tabs -->
+    <div class="address-bar">
+        <!-- Logo and company name on the left -->
+        <div class="logo">
+            <a href="/" class="logo-link">
+                <img src="{{ url_for('static', filename='company_logo.png') }}" alt="Company Logo" class="logo-img">
+                <span class="logo-text">| <strong> INGWE WASTE MANAGEMENT</strong> </span>
+            </a>
+        </div>
+        <!-- Navigation tabs -->
+        <nav>
+            <ul class="nav-list">
+                <li class="dropdown">
+                    <a href="#" class="dropbtn">ABOUT US</a>
+                    <div class="dropdown-content">
+                        <a href="#">Contacts</a>
+                        <a href="#">Company Overview</a>
+                        <a href="#">Leadership Team</a>
+                        <a href="#">Our Story</a>
+                    </div>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropbtn">SERVICES</a>
+                    <div class="dropdown-content">
+                        <a href="#">Waste Management</a>
+                        <a href="#">Waste Collection</a>
+                        <a href="#">Land Fill Management</a>
+                        <a href="#">Hazardous Waste Management</a>
+                        <a href="#">Medical Waste services</a>
+                        <a href="#">Bioremediation Services</a>
+                        <a href="#">Electronic Waste Management</a>
+                        <a href="#">Sewer Drain Management</a>
+                        <a href="#">Residential & Commercial Services</a>
+                        <a href="#">Solid Waste Management</a>
+                        <a href="#">Plastic Waste Management</a>
+                        <a href="#">Sanitary waste Management</a>
+                        <a href="#">Street Sweeping Services</a>
+                        <a href="#">Disaster Cleanup Services</a>
+                        <a href="#">Recycling Services</a>
+                    </div>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropbtn">PROJECTS</a>
+                    <div class="dropdown-content">
+                        <a href="#">Projects</a>
+                        <a href="#">Environmental Projects</a>
+                        <a href="#">Green Energy Projects</a>
+                    </div>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropbtn">MEDIA</a>
+                    <div class="dropdown-content">
+                        <a href="#">News & Events</a>
+                        <a href="#">Blog</a>
+                        <a href="#">Publications</a>
+                    </div>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropbtn">GALLERY</a>
+                    <div class="dropdown-content">
+                        <a href="#">Photo Gallery</a>
+                        <a href="#">Video Gallery</a>
+                    </div>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropbtn">CLIENTS</a>
+                    <div class="dropdown-content">
+                        <a href="#">Client Testimonials</a>
+                        <a href="#">Case Studies</a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+        <!-- Search input -->
+        <div class="search">
+            <form action="#" method="get">
+                <input type="text" placeholder="Search..." name="search">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+        <!-- Login button on the far right -->
+        <div class="login">
+            <a href="#" id="login-btn">Login</a>
+        </div>
+    </div>
+    <!-- Transparent dark grey bar below the title bar -->
+    <div class="sub-bar"></div>
+    <!-- Centered content -->
+    <div class="centered-content">
+        <h2 class="glow-slide">Welcome to Ingwe Waste Management, conserve through management.</h2>
+        <p>We are happy to have you here. We hope you enjoy your stay and we look forward to serving you.</p>
+        
+        <!-- Slideshow container -->
+        <div class="slideshow-container">
+            <div><img src="{{ url_for('static', filename='slide1.jpg') }}" alt="Slide 1"></div>
+            <div><img src="{{ url_for('static', filename='slide2.jpg') }}" alt="Slide 2"></div>
+            <div><img src="{{ url_for('static', filename='slide3.jpg') }}" alt="Slide 3"></div>
+        </div>
+    </div>
+
+    <!-- Login form -->
+    <div class="overlay" id="overlay"></div>
+    <div class="login-container" id="login-container">
+        <button class="close-btn" id="close-btn">&times;</button>
+        <h2>Login</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="error-message">
+                    {% for category, message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        <form method="POST" action="{{ url_for('login') }}">
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('.slideshow-container').slick({
+                dots: true,
+                infinite: true,
+                speed: 500,
+                fade: true,
+                cssEase: 'linear'
+            });
+        });
+
+        document.getElementById('login-btn').addEventListener('click', function() {
+            document.getElementById('login-container').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        });
+
+        document.getElementById('close-btn').addEventListener('click', function() {
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        });
+
+        document.getElementById('overlay').addEventListener('click', function() {
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        });
+    </script>
+</body>
+</html>

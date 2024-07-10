@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Tables</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            overflow-x: hidden;
+        }
+        .container {
+            width: 100%;
+            margin: auto;
+            overflow: hidden;
+            text-align: center;
+            padding-top: 120px; /* Adjusted to make space for address bar and sub address bar */
+        }
+        .address-bar {
+            position: fixed;
+            width: 100%;
+            background: #060606; /* Dark grey background */
+            color: white;
+            padding: 10px;
+            border-bottom: 2px solid #f4ba27; /* Thin green line at the bottom */
+            text-align: center;
+            top: 0;
+            z-index: 1000;
+        }
+        .sub-address-bar {
+            position: fixed;
+            width: 100%;
+            background: rgba(141, 143, 144, 0.5); /* Transparent/Frosted glass effect */
+            backdrop-filter: blur(5px);
+            color: rgb(238, 17, 17);
+            padding: 30px; /* Increased padding for thickness */
+            top: 50px; /* Position below the address bar */
+            border-bottom: 2px solid #737572; /* Thin green line at the bottom */
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .logo {
+            position: absolute;
+            left: 30px;
+            height: 75px;
+        }
+        .sub-address-bar p {
+            margin: 0;
+            font-size: 24px; /* Adjust font size as needed */
+        }
+        header {
+            display: none;
+        }
+        .tables {
+            margin: 20px 0;
+            text-align: center; /* Center the table buttons */
+        }
+        .tables ul {
+            padding: 0;
+            list-style: none;
+            display: inline-block; /* Center the list container */
+        }
+        .tables ul li {
+            display: inline-block;
+            margin: 10px;
+        }
+        .tables a {
+            display: block;
+            background: #4CAF50; /* Green color from the image */
+            color: #fff;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .tables a:hover {
+            background: #3e8e41; /* Darker green for hover effect */
+        }
+        .form-container {
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            text-align: center;
+        }
+        form input, form select, form button {
+            display: block;
+            width: 80%;
+            margin: 10px auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        form select {
+            background: rgba(255, 255, 255, 0.5); /* Transparent/Frosted glass effect */
+            backdrop-filter: blur(5px);
+        }
+        form input.error, form select.error {
+            border-color: red;
+        }
+        form label.error {
+            color: red;
+            font-weight: bold;
+        }
+        form button {
+            background: #4CAF50; /* Green color from the image */
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        form button:hover {
+            background: #3e8e41; /* Darker green for hover effect */
+        }
+        table {
+            width: 100%;
+            margin: 20px 0;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50; /* Green color from the image */
+            color: white;
+        }
+        .error-message {
+            color: red;
+            font-weight: bold;
+        }
+
+        .dropdown-container {
+            position: relative;
+            display: inline-block;
+            width: 80%;
+        }
+
+        .dropdown-list {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 100%;
+            border: 1px solid #ddd;
+            z-index: 1;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .dropdown-list div {
+            color: black;
+            padding: 8px 16px;
+            text-decoration: none;
+            display: block;
+            cursor: pointer;
+        }
+
+        .dropdown-list div:hover {
+            background-color: #ddd;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding-top: 130px; /* Adjust for smaller screens */
+            }
+            .tables ul li {
+                display: block;
+                margin: 5px 0;
+            }
+            .tables a {
+                padding: 10px;
+                font-size: 16px;
+            }
+            .form-container {
+                width: 100%;
+                padding: 10px;
+            }
+            form input, form select, form button {
+                width: 100%;
+            }
+            th, td {
+                padding: 5px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding-top: 140px; /* Adjust for even smaller screens */
+            }
+            .address-bar p, .sub-address-bar p {
+                font-size: 14px;
+            }
+            .tables a {
+                padding: 8px;
+                font-size: 14px;
+            }
+        }
+    </style>
+    <script>
+        function getLocationAndTimestamp() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    document.getElementById('geo_location').value = position.coords.latitude + ',' + position.coords.longitude;
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+            document.getElementById('created_at').value = new Date().toISOString();
+        }
+        window.onload = getLocationAndTimestamp;
+
+        function filterHouses() {
+            const input = document.getElementById("houseSearchInput");
+            const filter = input.value.toUpperCase();
+            const div = document.getElementById("houseDropdown");
+            const items = div.getElementsByTagName("div");
+            let showDropdown = false;
+
+            for (let i = 0; i < items.length; i++) {
+                const txtValue = items[i].textContent || items[i].innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    items[i].style.display = "";
+                    showDropdown = true;
+                } else {
+                    items[i].style.display = "none";
+                }
+            }
+
+            div.style.display = showDropdown ? "block" : "none";
+        }
+
+        function selectHouse(element) {
+            document.getElementById("houseSearchInput").value = element.textContent;
+            document.getElementById("house_id").value = element.getAttribute("data-value");
+            document.getElementById("houseDropdown").style.display = "none";
+        }
+    </script>
+</head>
+<body>
+    <div class="address-bar">
+        <p>Database: waste_management_system</p>
+    </div>
+    <div class="sub-address-bar">
+        <img src="{{ url_for('static', filename='company_logo.png') }}" alt="Company Logo" class="logo">
+        <p>System Admin</p>
+    </div>
+    <div class="container tables">
+        <h2>Tables</h2>
+        <div class="table-buttons">
+            <ul>
+                {% for table in tables %}
+                    <li><a href="{{ url_for('system_admin.table', table_name=table[0]) }}">{{ table[0] }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% if table_name %}
+        <div id="{{ table_name }}" class="container">
+            <div class="form-container">
+                <h2>Table: {{ table_name }}</h2>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="error-message">
+                            {% for category, message in messages %}
+                                <p>{{ message }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% for column in columns %}
+                        {% if column == 'title' and table_name == 'users' %}
+                            <select name="title" class="{{ 'error' if form_errors.get(column) else '' }}" required>
+                                <option value="">Select title</option>
+                                <option value="Mr" {% if form_data.get('title') == 'Mr' %} selected {% endif %}>Mr</option>
+                                <option value="Ms" {% if form_data.get('title') == 'Ms' %} selected {% endif %}>Ms</option>
+                                <option value="Dr" {% if form_data.get('title') == 'Dr' %} selected {% endif %}>Dr</option>
+                                <option value="Prof" {% if form_data.get('title') == 'Prof' %} selected {% endif %}>Prof</option>
+                            </select>
+                            {% if form_errors.get(column) %}
+                                <label class="error">This field is required *</label>
+                            {% endif %}
+                        {% elif column == 'email' %}
+                            <input type="email" name="{{ column }}" placeholder="{{ column }}" value="{{ form_data.get(column, '') }}" class="{{ 'error' if form_errors.get(column) else '' }}" required>
+                            {% if form_errors.get(column) %}
+                                <label class="error">This field is required *</label>
+                            {% endif %}
+                        {% elif column == 'cell_number' %}
+                            <input type="tel" name="{{ column }}" placeholder="{{ column }}" pattern="[0-9]{10,15}" value="{{ form_data.get(column, '') }}" class="{{ 'error' if form_errors.get(column) else '' }}" required>
+                            {% if form_errors.get(column) %}
+                                <label class="error">This field is required *</label>
+                            {% endif %}
+                        {% elif column == 'role_id' and table_name == 'users' %}
+                            <select name="role_id" class="{{ 'error' if form_errors.get(column) else '' }}" required>
+                                <option value="">Select role</option>
+                                {% for role in roles %}
+                                    <option value="{{ role[0] }}" {% if form_data.get('role_id') == role[0] %} selected {% endif %}>{{ role[1] }}</option>
+                                {% endfor %}
+                            </select>
+                            {% if form_errors.get(column) %}
+                                <label class="error">This field is required *</label>
+                            {% endif %}
+                        {% elif column == 'house_id' and table_name == 'users' %}
+                            <div class="dropdown-container">
+                                <input type="text" id="houseSearchInput" placeholder="Type house number..." onkeyup="filterHouses()" class="{{ 'error' if form_errors.get(column) else '' }}" required>
+                                <div id="houseDropdown" class="dropdown-list">
+                                    {% for house in houses %}
+                                        <div data-value="{{ house[0] }}" onclick="selectHouse(this)">{{ house[1] }}, {{ house[2] }}, {{ house[3] }}</div>
+                                    {% endfor %}
+                                </div>
+                                <input type="hidden" name="house_id" id="house_id" value="{{ form_data.get('house_id', '') }}">
+                            </div>
+                            {% if form_errors.get(column) %}
+                                <label class="error">This field is required *</label>
+                            {% endif %}
+                        {% elif column == 'date' and table_name == 'pickup_schedules' %}
+                            <input type="date" name="date" value="{{ form_data.get('date', '') }}" required>
+                            {% if form_errors.get(column) %}
+                                <label class="error">This field is required *</label>
+                            {% endif %}
+                        {% elif column == 'time_range' and table_name == 'pickup_schedules' %}
+                            <input list="time_ranges" name="time_range" value="{{ form_data.get('time_range', '') }}" required>
+                            <datalist id="time_ranges">
+                                {% for time_range in time_ranges %}
+                                    <option value="{{ time_range }}">
+                                {% endfor %}
+                            </datalist>
+                            {% if form_errors.get(column) %}
+                                <label class="error">This field is required *</label>
+                            {% endif %}
+                        {% elif column == 'image_path' and table_name == 'reports' %}
+                            <label for="image_path">Upload Image:</label>
+                            <input type="file" name="image_file" accept="image/*" capture="environment">
+                            <label for="image_url">or Enter Image URL:</label>
+                            <input type="text" name="image_path" placeholder="Enter image URL">
+                            {% if form_errors.get(column) %}
+                                <label class="error">This field is required *</label>
+                            {% endif %}
+                        {% elif column == 'geo_location' and table_name == 'reports' %}
+                            <input type="text" id="geo_location" name="geo_location" placeholder="{{ column }}" value="{{ form_data.get(column, '') }}" class="{{ 'error' if form_errors.get(column) else '' }}" readonly required>
+                            {% if form_errors.get(column) %}
+                                <label class="error">This field is required *</label>
+                            {% endif %}
+                        {% elif column == 'created_at' and table_name == 'reports' %}
+                            <input type="text" id="created_at" name="created_at" placeholder="{{ column }}" value="{{ form_data.get(column, '') }}" class="{{ 'error' if form_errors.get(column) else '' }}" readonly required>
+                            {% if form_errors.get(column) %}
+                                <label class="error">This field is required *</label>
+                            {% endif %}
+                        {% else %}
+                            <input type="text" name="{{ column }}" placeholder="{{ column }}" value="{{ form_data.get(column, '') }}" class="{{ 'error' if form_errors.get(column) else '' }}" required>
+                            {% if form_errors.get(column) %}
+                                <label class="error">This field is required *</label>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    <button type="submit">Add to {{ table_name }}</button>
+                </form>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        {% for column in columns %}
+                            <th>{{ column }}</th>
+                        {% endfor %}
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                        <tr>
+                            {% for value in row %}
+                                <td>{{ value }}</td>
+                            {% endfor %}
+                            <td>
+                                <form method="post" style="display:inline;">
+                                    <input type="hidden" name="delete" value="{{ row[0] }}">
+                                    <button type="submit">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+</body>
+</html>
